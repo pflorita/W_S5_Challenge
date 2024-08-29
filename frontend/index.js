@@ -11,7 +11,29 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
 
   let mentors = [] // fix this
   let learners = [] // fix this
+  
 
+  async function fetchLearners() {
+    try {
+      const response = await axios.get('http://localhost:3003/api/learners');
+      learners = response.data;
+    } catch (error) {
+      console.error('There was an error:', error);
+    }
+  } 
+
+  async function fetchMentors() {
+    try {
+      const response = await axios.get('http://localhost:3003/api/mentors');
+      response.data.forEach(data => mentors.push(data));
+    } catch (error) {
+      console.log('There was an error getting mentors:', error);
+    }
+  }
+  
+  await fetchLearners();
+  await fetchMentors();
+  
   // 👆 ==================== TASK 1 END ====================== 👆
 
   // 👇 ==================== TASK 2 START ==================== 👇
@@ -28,6 +50,10 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   //     "Grace Hopper"
   //   ]`
   // }
+
+  learners.forEach(learner => learner.mentors.forEach((id, idx) => learner.mentors[idx] = `${mentors.find(mentor => mentor.id === id).firstName} ${mentors.find(mentor => mentor.id === id).lastName}`));
+
+ 
 
   // 👆 ==================== TASK 2 END ====================== 👆
 
@@ -48,10 +74,34 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
     // ❗ Inspect the mock site closely to understand what the initial texts and classes look like!
 
     const card = document.createElement('div')
+    card.classList.add('card');
+
     const heading = document.createElement('h3')
+    heading.textContent = `${learner.fullName}, ID ${learner.id}`;
+    card.appendChild(heading);
+
     const email = document.createElement('div')
+    email.textContent = learner.email;
+    card.appendChild(email);
+
     const mentorsHeading = document.createElement('h4')
+    mentorsHeading.textContent = 'Mentors';
+
+    if(mentorsHeading.className === 'closed') {
+      mentorsHeading.classList.add('open');
+    } else {
+      mentorsHeading.classList.add('closed');
+    }
+    card.appendChild(mentorsHeading);
+
     const mentorsList = document.createElement('ul')
+    learner.mentors.forEach(mentor => {
+      const listItem = document.createElement('li');
+      listItem.textContent = mentor;
+      mentorsList.appendChild(listItem);
+    }
+    );
+
 
     // 👆 ==================== TASK 3 END ====================== 👆
 
